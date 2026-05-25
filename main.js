@@ -3,6 +3,13 @@ let counter = 0;
 let addtodobutton = document.querySelector("button");
 addtodobutton.addEventListener("click", addTodolist);
 
+
+async function getrequest(){
+    let data = await fetch("http://127.0.0.1:3000/")
+    let todos = await data.json();
+    render(todos);
+}
+
 async function addTodolist(){
     let value = document.querySelector("input").value;
     if(value === ""){
@@ -37,9 +44,12 @@ render(data);
 function maketodo(title, i){
     let element = document.createElement("div");
     let todotitle = document.createElement("h3");
-    todotitle.textContent = `${i}. ${title}`;
-   
+    todotitle.textContent = `${i+1}. ${title}`;
+    let deletebutton = document.createElement("button");
+    deletebutton.innerText ="Delete";
     element.appendChild(todotitle);
+    element.appendChild(deletebutton);
+    element.setAttribute("class", "todo-divs")
     let parent =  document.getElementById("Todo-list-box");
     parent.appendChild(element);
 }
@@ -51,3 +61,5 @@ function render(data){
     maketodo(data[i].todo, i)
    }
 }
+
+getrequest();

@@ -7,7 +7,12 @@ const cors = require("cors");
 app.use(cors())
 app.use(Express.json())
 
+app.get("/", async (req, res) => {
 
+    let data = await fs.readFile("Todo.json", "utf-8");
+    res.json(JSON.parse(data));
+
+})
 
 app.post("/", async (req, res) =>{
     
