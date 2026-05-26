@@ -18,10 +18,10 @@ app.post("/", async (req, res) =>{
     
     let body = req.body;
    let content = body.todotask;
-   let id = body.id;
+   let id =body.identi;
    let obj ={
     "todo": `${content}`,
-    "id": `${id}`
+    "id": `${body.identi}`
    }
    let data = await fs.readFile("Todo.json", "utf-8");
    

@@ -5,18 +5,21 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+     background-color: #0d1321;
     height: 100vh;
 }
 
 #Todo{
     height: auto;
     width: 500px;
-    border: 1px solid black;
+   background-color: #1d2d44;
+   border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    gap: 50px;
 }
 
 #todo-input-box{
@@ -40,6 +43,7 @@ body{
     justify-content: center;
     align-items: center;
     height: auto;
+    gap: 20px;
 }
 
 .todo-divs{
@@ -49,5 +53,27 @@ body{
     height: auto;
     width: 300px;
    text-overflow: clip;
+   align-items: center;
+   border: 1px solid black;
+   padding: 10px;
+   color:antiquewhite;
+   overflow-wrap: break-word;
+}
 
+.todo-div-button{
+   
+    height: 30px;
+    width: 55px;
+    border: 0px;
+    border-radius: 8px;
+    
+}
+
+#todo-div-button-edit{
+    background-color: #f3b700;
+
+}
+
+#todo-div-button-delete{
+    background-color: #ad2831;
 }
