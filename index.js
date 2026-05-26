@@ -18,8 +18,10 @@ app.post("/", async (req, res) =>{
     
     let body = req.body;
    let content = body.todotask;
+   let id = body.id;
    let obj ={
     "todo": `${content}`,
+    "id": `${id}`
    }
    let data = await fs.readFile("Todo.json", "utf-8");
    
@@ -31,6 +33,21 @@ app.post("/", async (req, res) =>{
 
 
    
+})
+
+app.delete("/:id", async (req, res)=>{
+    let id = req.params.id;
+    let data = await fs.readFile("Todo.json", "utf-8");
+    data = JSON.parse(data);
+    for(let i = 0; i<data.length; i++){
+        if(data[i].id === id){
+            data.splice(i, 1);
+            break;
+        }
+    }
+    
+    await fs.writeFile("Todo.json", JSON.stringify(data));
+    res.json(data);
 })
 
 app.listen(3000)

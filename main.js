@@ -1,4 +1,4 @@
-let counter = 0;
+let counter = 1;
 
 let addtodobutton = document.querySelector("button");
 addtodobutton.addEventListener("click", addTodolist);
@@ -25,8 +25,8 @@ async function addTodolist(){
 },
         body: JSON.stringify({
             "todotask" : `${value}`,
-           
-        }),
+           "id" :  `${counter}`,
+        }), 
     })
 
 } catch(err){
@@ -36,30 +36,51 @@ async function addTodolist(){
 
 let data = await todores.json();
 render(data);
-
+counter++;
 }
 
 
 
-function maketodo(title, i){
+ function maketodo(title,id, i){
     let element = document.createElement("div");
+    element.setAttribute("id", `${id}`);
+    let elementid = element.id;
     let todotitle = document.createElement("h3");
     todotitle.textContent = `${i+1}. ${title}`;
     let deletebutton = document.createElement("button");
     deletebutton.innerText ="Delete";
+
+    deletebutton.addEventListener("click", async () =>{
+        let response = await fetch(`http://127.0.0.1:3000/${elementid}`, {
+            method: "DELETE",
+            body:JSON.stringify({
+                "id" : `${id}`
+            })
+        })
+
+        let data = await response.json();
+       getrequest();
+    } )
+
+
     element.appendChild(todotitle);
     element.appendChild(deletebutton);
     element.setAttribute("class", "todo-divs")
     let parent =  document.getElementById("Todo-list-box");
     parent.appendChild(element);
+    
 }
 
 function render(data){
     document.getElementById("Todo-list-box").innerHTML = "";
-    let count = 1;
+    
    for(let i = 0; i<data.length; i++){
-    maketodo(data[i].todo, i)
+    maketodo(data[i].todo, data[i].id,  i)
    }
+}
+
+function deletetodo(){
+
 }
 
 getrequest();
