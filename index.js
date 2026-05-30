@@ -2,12 +2,13 @@ const Express = require("express")
 const fs = require("fs").promises
 const app = Express();
 const cors = require("cors");
+const path = require("path")
 
 
 app.use(cors())
 app.use(Express.json())
 
-let file = fs.readFile("Todo.json", "utf-8");
+let file = fs.readFile(path.join(__dirname, "Todo.json"), "utf-8");
  file = JSON.parse(file);
 
  let counter = file.length+1;
