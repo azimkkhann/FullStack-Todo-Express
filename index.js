@@ -5,18 +5,27 @@ const cors = require("cors");
 const path = require("path")
 
 
-app.use(cors())
-app.use(Express.json())
+app.use(cors());
+app.use(Express.json());
 
-let file = fs.readFile(path.join(__dirname, "Todo.json"), "utf-8");
- file = JSON.parse(file);
+let counter;
 
- let counter = file.length+1;
+async function init(){
+let file = await fs.readFile(path.join(__dirname, "Todo.json"), "utf-8");
+file = JSON.parse(file);
+counter = file.length+1;
+}
 
+init();
 
 app.get("/", async (req, res) => {
+
+    try{
     let data = await fs.readFile("Todo.json", "utf-8");
     res.json(JSON.parse(data));
+    } catch(err){
+        return new "cannot get Todo!"
+    }
 })
 
 app.post("/", async (req, res) =>{
@@ -34,7 +43,7 @@ app.post("/", async (req, res) =>{
    data.push(obj);
    await fs.writeFile("Todo.json", JSON.stringify(data));
    counter = counter +1;
-   res.json(data);
+   res.status(201).json(data);
 })
 
 
@@ -42,11 +51,19 @@ app.delete("/:id", async (req, res)=>{
     let id = req.params.id;
     let data = await fs.readFile("Todo.json", "utf-8");
     data = JSON.parse(data);
+    let isthere = false;
     for(let i = 0; i<data.length; i++){
         if(data[i].id === id){
             data.splice(i, 1);
+            isthere = true;
             break;
         }
+    }
+
+    if(!isthere){
+        res.status(404).json({
+            "error" : "Todo not found!"
+        });
     }
     
     await fs.writeFile("Todo.json", JSON.stringify(data));
@@ -60,12 +77,19 @@ app.put("/:id", async (req, res) => {
     let newvalue = req.body.newvalue;
     let data = await fs.readFile("Todo.json", "utf-8");
     data = JSON.parse(data);
-
+    let isthere = false;
     for(let i = 0; i<data.length; i++){
         if(data[i].id == req.params.id){
             data[i].todo = newvalue;
+            isthere = true;
             break;
         }
+    }
+
+    if(!isthere){
+        return res.status(404).json({
+            error : "Not found"
+        })
     }
 
     await fs.writeFile("Todo.json", JSON.stringify(data));
