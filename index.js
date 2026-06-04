@@ -2,7 +2,11 @@ const Express = require("express")
 const fs = require("fs").promises
 const app = Express();
 const cors = require("cors");
-const path = require("path")
+const path = require("path");
+const { readFile } = require("fs");
+const { use } = require("react");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "jwtsecret"
 
 
 app.use(cors());
@@ -18,14 +22,10 @@ counter = file.length+1;
 
 init();
 
-app.get("/", async (req, res) => {
 
-    try{
-    let data = await fs.readFile("Todo.json", "utf-8");
-    res.json(JSON.parse(data));
-    } catch(err){
-        return new "cannot get Todo!"
-    }
+
+app.get("/", async (req, res) => {
+    return res.sendFile(path.join(__dirname, "signup.html"))
 })
 
 app.post("/", async (req, res) =>{
@@ -95,5 +95,106 @@ app.put("/:id", async (req, res) => {
     await fs.writeFile("Todo.json", JSON.stringify(data));
     console.log("successfully updated");
 })
+
+app.post("/signup", async (req, res) =>{
+
+    let username;
+    let password;
+
+    try{
+        username = req.body.username;
+        password = req.body.password;
+    } catch (err){
+        return res.status(403).send("Cannot create user");
+    }
+
+
+    let data = await fs.readFile("Todo.json","utf-8");
+    data = JSON.parse(data);
+
+    let Exists = false;
+
+   data.find((u) => {
+    if(u.username == username){
+        Exists = true;
+        return;
+    }
+   });
+
+   if(Exists){
+    return res.status(409).send("Username already Exists!");
+   }
+
+   let newuser =  {
+    username : username,
+    password : password,
+    todo : []
+   };
+
+   data.push(newuser);
+   fs.writeFile("Todo.json", JSON.stringify(data));
+   res.sendFile(path.join(__dirname, "signin.html"))
+    console.log(data);
+
+})
+
+
+app.get("/signin", (req, res) =>{
+    res.sendFile(path.join(__dirname, "signin.html"));
+})
+
+
+
+
+app.post("/signin", async (req,res) =>{
+
+
+    let username = null;
+    let password = null;
+
+    try{
+        username = req.body.username;
+        password = req.body.password;
+    } catch(err){
+        return res.status(500).send(err);
+    }
+
+    let data = null;
+
+    try{
+        data = await fs.readFile("Todo.json", "utf-8");
+        data = JSON.parse(data);
+    } catch (err){
+        return res.status(500).send(err)
+    }
+
+    let isthere = data.find((u) =>{
+        if(u.username == username && u.password == password){
+            return true;
+        }
+    })
+
+    if(!isthere){
+        return res.status(404).send("Username or Password is invalid or do not exists!");
+    }
+
+    let token = jwt.sign({
+        username : username
+    }, JWT_SECRET);
+
+    res.json({
+        "token" : token
+    })
+
+
+})
+
+/*
+{
+username : username
+password : password
+todo : []
+}
+*/
 
 app.listen(3000)

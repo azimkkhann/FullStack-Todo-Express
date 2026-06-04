@@ -1,9 +1,11 @@
+const { response } = require("express");
 
 
 let addtodobutton = document.querySelector("button");
 addtodobutton.addEventListener("click", addTodolist);
 
 
+let token = null;
 
 async function getrequest(){
     let data = await fetch("http://127.0.0.1:3000/")
@@ -123,10 +125,6 @@ function render(data){
    for(let i = 0; i<data.length; i++){
     maketodo(data[i].todo, data[i].id,  i)
    }
-}
-
-function deletetodo(){
-
 }
 
 getrequest();
