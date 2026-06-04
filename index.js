@@ -11,6 +11,7 @@ const JWT_SECRET = "jwtsecret"
 
 app.use(cors());
 app.use(Express.json());
+app.use(Express.static(__dirname))
 
 let counter;
 
@@ -24,7 +25,7 @@ init();
 
 
 
-app.get("/", async (req, res) => {
+app.get("/signup", async (req, res) => {
     return res.sendFile(path.join(__dirname, "signup.html"))
 })
 
@@ -105,7 +106,7 @@ app.post("/signup", async (req, res) =>{
         username = req.body.username;
         password = req.body.password;
     } catch (err){
-        return res.status(403).send("Cannot create user");
+        return res.status(403).send(err);
     }
 
 
@@ -143,11 +144,7 @@ app.get("/signin", (req, res) =>{
     res.sendFile(path.join(__dirname, "signin.html"));
 })
 
-
-
-
 app.post("/signin", async (req,res) =>{
-
 
     let username = null;
     let password = null;

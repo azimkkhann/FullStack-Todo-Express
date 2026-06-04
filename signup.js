@@ -1,21 +1,28 @@
- let form = document.querySelector("form");
 
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const data = new FormData(form);
 
-            let username = data.usernameinput;
-            let password = data.password;
 
-            let response = await fetch("127.0.0.1:3000/signup", {
-                method : "POST",
-                headers : {
-                    "Content-type" : "application/json"
-                },
-                body: JSON.stringify({
-                    "username" : username, 
-                    "password" : password
-                })
-            })
+let submitbutton = document.getElementById("signup-button");
 
+
+
+submitbutton.addEventListener("click", async (e) =>{
+
+let response = null;
+let username = document.getElementById("signup-username-input").value;
+let password = document.getElementById("signup-password-input").value;
+
+    response = await fetch("http://127.0.0.1:3000/signup", {
+        method : "POST",
+        headers: {
+            "Content-type" : "application/json"
+        },
+        body : JSON.stringify({
+            "username" : username,
+            "password" : password
         })
+    })
+
+     document.getElementById("signup-username-input").value = "";
+     document.getElementById("signup-password-input").value = "";
+     window.location.href = "signin.html"
+})
