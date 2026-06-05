@@ -9,7 +9,8 @@
         let response = await fetch("http://127.0.0.1:3000/signin", {
                 method : "POST",
                 headers : {
-                    "Content-type" : "application/json"
+                    "Content-type" : "application/json",
+                    
                 },
                 body :JSON.stringify({
                     username : username,
@@ -21,7 +22,7 @@
             let data = await response.json();
 
 
-            if(!response.ok){
+            if(!response.status){
                 alert("Cannot authenticate please sign up first and make an account then sing in")
                 return;
             }
@@ -32,7 +33,7 @@
             console.log(localStorage.getItem("token"));
             document.getElementById("signin-username-input").value = "";
             document.getElementById("signin-password-input").value = "";
-            
+            window.location.href = "main.html";
         })
        
 

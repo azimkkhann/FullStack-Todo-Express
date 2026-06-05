@@ -1,17 +1,20 @@
-const { response } = require("express");
-
-
 let addtodobutton = document.querySelector("button");
 addtodobutton.addEventListener("click", addTodolist);
 
 
-let token = null;
-
 async function getrequest(){
-    let data = await fetch("http://127.0.0.1:3000/")
+    let token = localStorage.getItem("token");
+    let data = await fetch("http://127.0.0.1:3000/me", {
+        method : "GET", 
+        headers : {
+            authorization : token,
+            "Content-type" : "application/json",
+        }
+    })
     let todos = await data.json();
     render(todos);
 }
+
 
 
 
@@ -22,25 +25,28 @@ async function addTodolist(){
         alert("Please enter the value!");
         return;
     }
-    let todores;
+    let response;
     try{
-     todores = await fetch("http://127.0.0.1:3000/",{
+     response = await fetch("http://127.0.0.1:3000/me",{
         method: "POST",
         headers: {
     "Content-Type": "application/json",
+    authorization : localStorage.getItem("token")
 },
         body: JSON.stringify({
-            "todotask" : `${value}`,
+            todo : value
           
         }), 
     })
+
+    
 
 } catch(err){
     console.log(err);
     return;
 }
 document.querySelector("input").value = "";
-let data = await todores.json();
+let data = await response.json();
 render(data);
 
 }
@@ -48,6 +54,7 @@ render(data);
 
 
  function maketodo(title,id, i){
+
     let element = document.createElement("div");
     element.setAttribute("id", `${id}`);
     let elementid = element.id;
@@ -60,11 +67,17 @@ render(data);
     deletebutton.setAttribute("id",  "todo-div-button-delete")
 
     deletebutton.addEventListener("click", async () =>{
-        await fetch(`http://127.0.0.1:3000/${elementid}`, {
+       data =  await fetch(`http://127.0.0.1:3000/me/${elementid}`, {
+            
             method: "DELETE",
+            headers :{
+                authorization : localStorage.getItem("token"),
+                "Content-type" : "application/json"
+
+            }
         })
 
-        let data = await response.json();
+        data = await data.json();
        
     } )
 
@@ -95,10 +108,11 @@ render(data);
             
             isediting = false
 
-            fetch(`http://127.0.0.1:3000/${elementid}`, {
+            fetch(`http://127.0.0.1:3000/me/${elementid}`, {
                 method : "PUT",
                 headers:{
-                    "content-type":"application/json"
+                    "content-type":"application/json",
+                    authorization : localStorage.getItem('token')
                 },
                 body:JSON.stringify({
                     "newvalue" : `${newinput}`
@@ -121,10 +135,16 @@ render(data);
 function render(data){
 
     document.getElementById("Todo-list-box").innerHTML = "";
-    
+    let i = 1;
    for(let i = 0; i<data.length; i++){
-    maketodo(data[i].todo, data[i].id,  i)
+    maketodo(data[i].todo, data[i].id,   i)
    }
+    // for( const todo of data){
+    //     maketodo(data.todo, todo, i);
+    //     i++;
+    // }
 }
+
+
 
 getrequest();

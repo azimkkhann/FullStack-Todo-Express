@@ -18,10 +18,70 @@ let counter;
 async function init(){
 let file = await fs.readFile(path.join(__dirname, "Todo.json"), "utf-8");
 file = JSON.parse(file);
-counter = file.length+1;
+counter = file.length;
 }
 
 init();
+
+
+async function jwtdecode(req, res, next) {
+    let token = req.headers.authorization;
+    token = jwt.verify(token, JWT_SECRET);
+    
+    if(!token){
+        return res.status(401).send("You are unauthorized")
+    }
+
+    req.headers.username = token.username;
+    next();
+
+}
+
+
+app.get("/me", jwtdecode, async (req, res) =>{
+    
+    let username = req.headers.username;
+
+    let data = await fs.readFile("Todo.json", "utf-8");
+    data = JSON.parse(data);
+
+    let user = data.find((u) =>{
+        if(u.username == username){
+            return u;
+        }
+    })
+
+    let todos = user.todo;
+    res.json(todos);
+
+
+})
+
+ app.post("/me", jwtdecode, async (req, res) => {
+
+
+    let username = req.headers.username;
+    let todo = {
+        id : counter,
+        todo : req.body.todo
+    };
+    let data = await fs.readFile("Todo.json", "utf-8");
+    data = JSON.parse(data);
+
+    let user = data.find((u) =>{
+        if(u.username == username){
+            return u;
+        }
+    })
+
+    
+    
+    let todos = user.todo.push(todo);
+
+    res.json(todos);
+    await fs.writeFile("Todo.json", JSON.stringify(data));
+    counter++;
+ })
 
 
 
@@ -29,72 +89,69 @@ app.get("/signup", async (req, res) => {
     return res.sendFile(path.join(__dirname, "signup.html"))
 })
 
-app.post("/", async (req, res) =>{
-
-    let body = req.body;
-   let content = body.todotask;
-   
-   let obj ={
-    "todo": `${content}`,
-    "id": `${counter}`
-   }
-   let data = await fs.readFile("Todo.json", "utf-8");
-   
-   data = JSON.parse(data);
-   data.push(obj);
-   await fs.writeFile("Todo.json", JSON.stringify(data));
-   counter = counter +1;
-   res.status(201).json(data);
-})
 
 
-app.delete("/:id", async (req, res)=>{
+
+
+app.delete("/me/:id",jwtdecode, async (req, res)=>{
+
+    let username = req.headers.username;
     let id = req.params.id;
     let data = await fs.readFile("Todo.json", "utf-8");
     data = JSON.parse(data);
-    let isthere = false;
-    for(let i = 0; i<data.length; i++){
-        if(data[i].id === id){
-            data.splice(i, 1);
-            isthere = true;
+
+
+    let user = data.find((u) => {
+        if(u.username == username ){
+            return u;
+        }
+    })
+
+   
+   
+    for(let i = 0; i<user.todo.length; i++){
+        if(user.todo[i].id == id){
+            user.todo.splice(i, 1);
             break;
         }
-    }
-
-    if(!isthere){
-        res.status(404).json({
-            "error" : "Todo not found!"
-        });
     }
     
     await fs.writeFile("Todo.json", JSON.stringify(data));
-    res.json(data);
+    let todos = user.todo;
+    res.json(todos);
 })
 
 
-app.put("/:id", async (req, res) => {
+app.put("/me/:id", jwtdecode, async (req, res) => {
 
 
-    let newvalue = req.body.newvalue;
+    let username = req.headers.username;
+    let id = req.params.id;
+
+
     let data = await fs.readFile("Todo.json", "utf-8");
     data = JSON.parse(data);
-    let isthere = false;
-    for(let i = 0; i<data.length; i++){
-        if(data[i].id == req.params.id){
-            data[i].todo = newvalue;
-            isthere = true;
-            break;
-        }
-    }
 
-    if(!isthere){
-        return res.status(404).json({
-            error : "Not found"
-        })
-    }
+
+    let user = data.find((u) =>{
+        if(u.username == username){
+            return u;
+        }
+    })
+
+    let task = user.todo.find((u) => {
+        if(u.id == id){
+            return u;
+        }
+    })
+
+    
+    let newvalue = req.body.newvalue;
+    
+   task.todo = newvalue;
 
     await fs.writeFile("Todo.json", JSON.stringify(data));
-    console.log("successfully updated");
+    res.send("edited sucessfully")
 })
 
 app.post("/signup", async (req, res) =>{
@@ -172,7 +229,7 @@ app.post("/signin", async (req,res) =>{
     })
 
     if(!isthere){
-        return res.status(404).send("Username or Password is invalid or do not exists!");
+        return res.status(401).send("Username or Password is invalid or do not exists!");
     }
 
     let token = jwt.sign({
