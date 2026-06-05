@@ -78,7 +78,7 @@ app.get("/me", jwtdecode, async (req, res) =>{
     
     let todos = user.todo.push(todo);
 
-    res.json(todos);
+    res.json(user.todo);
     await fs.writeFile("Todo.json", JSON.stringify(data));
     counter++;
  })

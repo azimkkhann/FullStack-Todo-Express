@@ -11,6 +11,11 @@ let response = null;
 let username = document.getElementById("signup-username-input").value;
 let password = document.getElementById("signup-password-input").value;
 
+if(username == "" || password == ""){
+    alert("cannot leave empty values!")
+    return;
+}
+
     response = await fetch("http://127.0.0.1:3000/signup", {
         method : "POST",
         headers: {
@@ -25,4 +30,11 @@ let password = document.getElementById("signup-password-input").value;
      document.getElementById("signup-username-input").value = "";
      document.getElementById("signup-password-input").value = "";
      window.location.href = "signin.html"
+})
+
+
+let signinbutton = document.getElementById("signin-button");
+
+signinbutton.addEventListener("click", (e) => {
+    window.location.href = "signin.html";
 })

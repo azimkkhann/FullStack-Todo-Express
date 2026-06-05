@@ -2,9 +2,15 @@
         let submitbutton = document.getElementById("signin-submit-button");
         submitbutton.addEventListener("click", async (e) =>{
 
+        
         let username = document.getElementById("signin-username-input").value;
         let password = document.getElementById("signin-password-input").value;
 
+
+        if(username == "" || password == ""){
+            alert("cannot leave empty values!")
+            return;
+        }
 
         let response = await fetch("http://127.0.0.1:3000/signin", {
                 method : "POST",
@@ -38,5 +44,9 @@
        
 
        
-       
+       let signupbutton = document.getElementById("signup-button");
+
+       signupbutton.addEventListener("click", (e) =>{
+        window.location.href = "signup.html"
+       })
 
