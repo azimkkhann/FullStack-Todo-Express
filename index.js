@@ -25,12 +25,15 @@ init();
 
 
 async function jwtdecode(req, res, next) {
-    let token = req.headers.authorization;
+
+     let token;
+    try{
+    token = req.headers.authorization;
     token = jwt.verify(token, JWT_SECRET);
-    
-    if(!token){
-        return res.status(401).send("You are unauthorized")
+    } catch(err){
+        return res.status(401).send("You are unauthorized");
     }
+    
 
     req.headers.username = token.username;
     next();
@@ -38,7 +41,11 @@ async function jwtdecode(req, res, next) {
 }
 
 
-app.get("/me", jwtdecode, async (req, res) =>{
+app.get("/me", async (req, res) =>{
+    res.sendFile(path.join(__dirname, "main.html"));
+})
+
+app.get("/getcontent", jwtdecode, async (req, res) =>{
     
     let username = req.headers.username;
 

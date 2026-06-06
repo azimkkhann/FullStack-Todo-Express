@@ -35,11 +35,16 @@
 
             let token = data.token;
 
+            if(!token){
+                alert("You are not logged in!");
+                return;
+            }
+
             localStorage.setItem("token", token);
             console.log(localStorage.getItem("token"));
             document.getElementById("signin-username-input").value = "";
             document.getElementById("signin-password-input").value = "";
-            window.location.href = "main.html";
+            window.location.href = "/me";
         })
        
 
@@ -47,6 +52,6 @@
        let signupbutton = document.getElementById("signup-button");
 
        signupbutton.addEventListener("click", (e) =>{
-        window.location.href = "signup.html"
+        window.location.href = "/signup"
        })
 

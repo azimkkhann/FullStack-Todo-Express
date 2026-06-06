@@ -4,7 +4,7 @@ addtodobutton.addEventListener("click", addTodolist);
 
 async function getrequest(){
     let token = localStorage.getItem("token");
-    let data = await fetch("http://127.0.0.1:3000/me", {
+    let data = await fetch("http://127.0.0.1:3000/getcontent", {
         method : "GET", 
         headers : {
             authorization : token,
@@ -20,7 +20,7 @@ let logoutbutton = document.getElementById("LogoutButton");
 
 logoutbutton.addEventListener("click", (e) =>{
     localStorage.removeItem("token");
-    window.location.href = "signin.html";
+    window.location.href = "/signin";
 })
 
 

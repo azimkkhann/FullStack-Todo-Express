@@ -36,5 +36,5 @@ if(username == "" || password == ""){
 let signinbutton = document.getElementById("signin-button");
 
 signinbutton.addEventListener("click", (e) => {
-    window.location.href = "signin.html";
+    window.location.href = "/signin";
 })
