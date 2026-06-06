@@ -54,7 +54,7 @@ body{
     width: 300px;
    text-overflow: clip;
    align-items: center;
-   border: 1px solid black;
+   border: 0px solid black;
    padding: 10px;
    color:antiquewhite;
    overflow-wrap: break-word;
