@@ -16,6 +16,14 @@ async function getrequest(){
 }
 
 
+let logoutbutton = document.getElementById("LogoutButton");
+
+logoutbutton.addEventListener("click", (e) =>{
+    localStorage.removeItem("token");
+    window.location.href = "signin.html";
+})
+
+
 
 
 async function addTodolist(){

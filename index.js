@@ -85,7 +85,7 @@ app.get("/me", jwtdecode, async (req, res) =>{
 
 
 
-app.get("/signup", async (req, res) => {
+app.get("/", async (req, res) => {
     return res.sendFile(path.join(__dirname, "signup.html"))
 })
 
