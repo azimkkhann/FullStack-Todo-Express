@@ -28,8 +28,8 @@
             let data = await response.json();
 
 
-            if(!response.status){
-                alert("Cannot authenticate please sign up first and make an account then sing in")
+            if(!response.ok){
+                alert("Cannot authenticate please sign up first and make an account then sign in")
                 return;
             }
 

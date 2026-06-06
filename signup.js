@@ -29,7 +29,7 @@ if(username == "" || password == ""){
 
      document.getElementById("signup-username-input").value = "";
      document.getElementById("signup-password-input").value = "";
-     window.location.href = "signin.html"
+     window.location.href = "/signin"
 })
 
 

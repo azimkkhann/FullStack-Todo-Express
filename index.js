@@ -236,7 +236,9 @@ app.post("/signin", async (req,res) =>{
     })
 
     if(!isthere){
-        return res.status(401).send("Username or Password is invalid or do not exists!");
+       return res.status(401).send({
+        message : "Not authorise to sign in"
+       })
     }
 
     let token = jwt.sign({
@@ -246,7 +248,7 @@ app.post("/signin", async (req,res) =>{
     res.json({
         "token" : token
     })
-
+    console.log(`${username} Sigined in with token ${token}`);
 
 })
 
